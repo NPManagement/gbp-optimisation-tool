@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBP Optimization Survey & Action Plan</title>
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #EA4335;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #fff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+        }
+        
+        .survey-container, .results-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .question-group {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+        }
+        
+        .question-group h3 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+        
+        .section-intro {
+            margin-bottom: 15px;
+            font-style: italic;
+            color: #555;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question p {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .question-context {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .option {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .option:hover {
+            background-color: #e9f0fe;
+            border-color: var(--primary-color);
+        }
+        
+        .option.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .custom-input {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #2d9348;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #d62d1e;
+        }
+        
+        .buttons-container {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .results-container {
+            display: none;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin: 20px 0 10px;
+        }
+        
+        .action-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-left: 4px solid var(--primary-color);
+            background-color: #f9f9f9;
+        }
+        
+        .action-item h4 {
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .priority {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: white;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .high {
+            background-color: var(--accent-color);
+        }
+        
+        .medium {
+            background-color: #FBBC05;
+        }
+        
+        .low {
+            background-color: var(--secondary-color);
+        }
+        
+        .action-benefit {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .action-how {
+            background-color: #f0f0f0;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loader-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .progress-container {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .survey-container, .results-container {
+                padding: 15px;
+            }
+            
+            .question-group {
+                padding: 15px;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GBP Optimization Survey & Action Plan</h1>
+            <p>Complete this 30-question survey to receive a prioritized action plan for optimizing your Google Business Profile</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div class="progress-text">0/26 questions answered</div>
+        </div>
+        
+        <div class="survey-container" id="surveyContainer">
+            <!-- Business Information Section -->
+            <div class="question-group">
+                <h3>Basic Business Information</h3>
+                <p class="section-intro">This information forms the foundation of your Google Business Profile and is critical for customers to find you.</p>
+                
+                <div class="question" data-category="business-info" data-id="1">
+                    <p>1. Have you claimed and verified your Google Business Profile?</p>
+                    <p class="question-context">Verification gives you full control of your listing and proves to Google you're the legitimate business owner.</p>
+                    <div class="options">
+                        <div class="option" data-value="verified">Yes - I've claimed and verified it</div>
+                        <div class="option" data-value="claimed">I've claimed it but haven't completed verification</div>
+                        <div class="option" data-value="none">I haven't claimed it yet</div>
+                        <div class="option" data-value="unsure">I'm not sure</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="business-info" data-id="2">
+                    <p>2. Is your business name, address, and phone number correct?</p>
+                    <p class="question-context">This basic contact information is essential for customers to find and reach you.</p>
+                    <div class="options">
+                        <div class="option" data-value="complete">Yes - all information is accurate and up-to-date</div>
+                        <div class="option" data-value="mostly">Mostly correct but needs minor updates</div>
+                        <div class="option" data-value="outdated">The information is outdated or incorrect</div>
+                        <div class="option" data-value="incomplete">Some important information is missing</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="business-info" data-id="3">
+                    <p>3. Are your business hours correctly listed on your profile?</p>
+                    <p class="question-context">Accurate hours prevent customer frustration and negative reviews from people who arrive when you're closed.</p>
+                    <div class="options">
+                        <div class="option" data-value="complete">Yes - regular hours and special holiday hours are all correct</div>
+                        <div class="option" data-value="regular">Regular hours are correct, but no special hours are listed</div>
+                        <div class="option" data-value="incomplete">Hours are listed but not fully accurate</div>
+                        <div class="option" data-value="none">No hours are listed</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="business-info" data-id="4">
+                    <p>4. Is your website linked to your Google Business Profile?</p>
+                    <p class="question-context">A linked website allows customers to easily find more information about your business.</p>
+                    <div class="options">
+                        <div class="option" data-value="optimized">Yes - website is linked and optimized for local search</div>
+                        <div class="option" data-value="linked">Yes - website is linked but not specifically optimized</div>
+                        <div class="option" data-value="incorrect">A website is linked but it's incorrect or outdated</div>
+                        <div class="option" data-value="none">No website is linked</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Business Description Section -->
+            <div class="question-group">
+                <h3>Your Business Description</h3>
+                <p class="section-intro">Your business description tells customers what you do, how you're different, and why they should choose you.</p>
+                
+                <div class="question" data-category="description" data-id="5">
+                    <p>5. How detailed is your business description?</p>
+                    <p class="question-context">A complete description helps customers understand what you offer and improves your search visibility.</p>
+                    <div class="options">
+                        <div class="option" data-value="comprehensive">Very detailed (covers services, history, and unique features)</div>
+                        <div class="option" data-value="adequate">Somewhat detailed but could be improved</div>
+                        <div class="option" data-value="minimal">Very basic description with minimal details</div>
+                        <div class="option" data-value="none">No description has been added</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="description" data-id="6">
+                    <p>6. Does your description include words people might search for?</p>
+                    <p class="question-context">Using relevant search terms helps customers find your business when looking for your services.</p>
+                    <div class="options">
+                        <div class="option" data-value="excellent">Yes - includes many relevant search terms</div>
+                        <div class="option" data-value="good">Includes some search terms but could use more</div>
+                        <div class="option" data-value="poor">Very few or no relevant search terms</div>
+                        <div class="option" data-value="unsure">I'm not sure what search terms to include</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="description" data-id="7">
+                    <p>7. Does your description explain what makes your business special?</p>
+                    <p class="question-context">Highlighting your unique qualities helps you stand out from competitors.</p>
+                    <div class="options">
+                        <div class="option" data-value="clear">Yes - clearly explains what makes us different</div>
+                        <div class="option" data-value="vague">Mentions some unique qualities but not clearly</div>
+                        <div class="option" data-value="generic">Generic description that could apply to any similar business</div>
+                        <div class="option" data-value="none">No description added</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Services Section -->
+            <div class="question-group">
+                <h3>Products and Services</h3>
+                <p class="section-intro">Listing your products and services helps customers understand exactly what you offer before they contact you.</p>
+                
+                <div class="question" data-category="services" data-id="8">
+                    <p>8. How many of your products or services are listed on your profile?</p>
+                    <p class="question-context">A complete listing helps customers know if you offer what they're looking for.</p>
+                    <div class="options">
+                        <div class="option" data-value="all">All or most of our products/services are listed</div>
+                        <div class="option" data-value="most">Many products/services are listed, but not all</div>
+                        <div class="option" data-value="some">Only a few of our products/services are listed</div>
+                        <div class="option" data-value="few">None or almost none are listed</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="services" data-id="9">
+                    <p>9. How detailed are your product/service descriptions?</p>
+                    <p class="question-context">Detailed descriptions help customers understand what you offer and make purchasing decisions.</p>
+                    <div class="options">
+                        <div class="option" data-value="detailed">Very detailed - includes prices, features, and benefits</div>
+                        <div class="option" data-value="basic">Basic descriptions that cover the essentials</div>
+                        <div class="option" data-value="names">Just names with little or no description</div>
+                        <div class="option" data-value="none">No products/services are listed</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="services" data-id="10">
+                    <p>10. How often do you update your product/service information?</p>
+                    <p class="question-context">Keeping information current ensures customers see your latest offerings and correct prices.</p>
+                    <div class="options">
+                        <div class="option" data-value="immediate">Whenever changes happen (new products, price changes)</div>
+                        <div class="option" data-value="quarterly">Every few months we review and update</div>
+                        <div class="option" data-value="annual">Once a year or less frequently</div>
+                        <div class="option" data-value="never">Never updated since we first set it up</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Photos and Videos Section -->
+            <div class="question-group">
+                <h3>Photos and Videos</h3>
+                <p class="section-intro">Visual content dramatically increases engagement and helps customers choose your business.</p>
+                
+                <div class="question" data-category="media" data-id="11">
+                    <p>11. How many photos have you added to your Google Business Profile?</p>
+                    <p class="question-context">Businesses with more photos receive more customer interactions and visits.</p>
+                    <div class="options">
+                        <div class="option" data-value="20+">20 or more photos</div>
+                        <div class="option" data-value="10-19">10-19 photos</div>
+                        <div class="option" data-value="5-9">5-9 photos</div>
+                        <div class="option" data-value="0-4">0-4 photos</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="media" data-id="12">
+                    <p>12. Do you have good quality photos of your building's exterior?</p>
+                    <p class="question-context">Exterior photos help customers recognize your location and find you more easily.</p>
+                    <div class="options">
+                        <div class="option" data-value="professional">Yes - high-quality photos from multiple angles</div>
+                        <div class="option" data-value="good">Yes - a decent photo or two of the exterior</div>
+                        <div class="option" data-value="poor">Only poor quality or outdated exterior photos</div>
+                        <div class="option" data-value="none">No exterior photos</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="media" data-id="13">
+                    <p>13. Do you have good quality photos of your business interior?</p>
+                    <p class="question-context">Interior photos help customers know what to expect when they visit your location.</p>
+                    <div class="options">
+                        <div class="option" data-value="professional">Yes - high-quality photos showing different areas</div>
+                        <div class="option" data-value="good">Yes - a few decent interior photos</div>
+                        <div class="option" data-value="poor">Only poor quality or outdated interior photos</div>
+                        <div class="option" data-value="none">No interior photos</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="media" data-id="14">
+                    <p>14. Do you have photos that show your products or services?</p>
+                    <p class="question-context">Product/service photos help customers understand exactly what you offer.</p>
+                    <div class="options">
+                        <div class="option" data-value="comprehensive">Yes - photos showing most of our products/services</div>
+                        <div class="option" data-value="partial">Yes - photos of our most popular items only</div>
+                        <div class="option" data-value="minimal">Very few product/service photos</div>
+                        <div class="option" data-value="none">No product/service photos</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="media" data-id="15">
+                    <p>15. Have you added any videos to your Google Business Profile?</p>
+                    <p class="question-context">Videos significantly increase engagement and help showcase your business in action.</p>
+                    <div class="options">
+                        <div class="option" data-value="multiple">Yes - several professional-quality videos</div>
+                        <div class="option" data-value="single">Yes - one good quality video</div>
+                        <div class="option" data-value="amateur">Yes - but only basic/amateur video</div>
+                        <div class="option" data-value="none">No videos</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reviews and Reputation Management Section -->
+            <div class="question-group">
+                <h3>Reviews and Reputation</h3>
+                <p class="section-intro">Reviews are one of the most important factors in customers choosing your business.</p>
+                
+                <div class="question" data-category="reviews" data-id="16">
+                    <p>16. How many Google reviews does your business have?</p>
+                    <p class="question-context">More reviews generally increase credibility and visibility in search results.</p>
+                    <div class="options">
+                        <div class="option" data-value="100+">100 or more reviews</div>
+                        <div class="option" data-value="50-99">50-99 reviews</div>
+                        <div class="option" data-value="10-49">10-49 reviews</div>
+                        <div class="option" data-value="1-9">1-9 reviews</div>
+                        <div class="option" data-value="0">No reviews yet</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="reviews" data-id="17">
+                    <p>17. What is your average star rating on Google?</p>
+                    <p class="question-context">Higher ratings significantly impact customer decision-making.</p>
+                    <div class="options">
+                        <div class="option" data-value="4.5-5">4.5 to 5.0 stars (Excellent)</div>
+                        <div class="option" data-value="4-4.4">4.0 to 4.4 stars (Very Good)</div>
+                        <div class="option" data-value="3-3.9">3.0 to 3.9 stars (Good/Average)</div>
+                        <div class="option" data-value="below-3">Below 3.0 stars (Below Average)</div>
+                        <div class="option" data-value="none">No reviews yet</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="reviews" data-id="18">
+                    <p>18. Do you actively ask customers to leave reviews?</p>
+                    <p class="question-context">Businesses that request reviews typically receive 5-10 times more reviews than those who don't.</p>
+                    <div class="options">
+                        <div class="option" data-value="automated">Yes - we have an automated system (email/text)</div>
+                        <div class="option" data-value="cards">Yes - we give cards or QR codes to customers</div>
+                        <div class="option" data-value="verbal">Yes - we verbally ask customers</div>
+                        <div class="option" data-value="none">No - we don't actively ask for reviews</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="reviews" data-id="19">
+                    <p>19. How do you handle responding to customer reviews?</p>
+                    <p class="question-context">Responding to reviews shows you value customer feedback and care about their experience.</p>
+                    <div class="options">
+                        <div class="option" data-value="all">We respond to all reviews within 1-2 days</div>
+                        <div class="option" data-value="most">We respond to most reviews within a week</div>
+                        <div class="option" data-value="negative">We only respond to negative reviews</div>
+                        <div class="option" data-value="none">We rarely or never respond to reviews</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="reviews" data-id="20">
+                    <p>20. What approach do you take with negative reviews?</p>
+                    <p class="question-context">How you handle negative feedback significantly impacts your online reputation.</p>
+                    <div class="options">
+                        <div class="option" data-value="protocol">We follow a specific protocol for addressing concerns</div>
+                        <div class="option" data-value="manager">A manager responds individually to each case</div>
+                        <div class="option" data-value="defensive">Sometimes we respond defensively if the review seems unfair</div>
+                        <div class="option" data-value="ignore">We generally ignore negative reviews</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Google Business Posts Section -->
+            <div class="question-group">
+                <h3>Google Posts and Updates</h3>
+                <p class="section-intro">Regular posts keep your profile fresh and engage customers with news, events, and offers.</p>
+                
+                <div class="question" data-category="posts" data-id="21">
+                    <p>21. How often do you publish posts on your Google Business Profile?</p>
+                    <p class="question-context">Regular posts increase visibility and engagement with potential customers.</p>
+                    <div class="options">
+                        <div class="option" data-value="weekly">Weekly or more often</div>
+                        <div class="option" data-value="monthly">1-3 times per month</div>
+                        <div class="option" data-value="quarterly">Occasionally (every few months)</div>
+                        <div class="option" data-value="never">Never or almost never</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="posts" data-id="22">
+                    <p>22. Who is responsible for managing your Google Business Profile?</p>
+                    <p class="question-context">Clear ownership ensures your profile stays updated and well-maintained.</p>
+                    <div class="options">
+                        <div class="option" data-value="dedicated">Someone specifically responsible for this task</div>
+                        <div class="option" data-value="marketing">Our marketing team handles it among other duties</div>
+                        <div class="option" data-value="manager">Owner/manager updates it when they remember</div>
+                        <div class="option" data-value="nobody">Nobody is clearly responsible for updates</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="posts" data-id="23">
+                    <p>23. What types of content do you share in your Google posts?</p>
+                    <p class="question-context">Different types of posts engage different customer interests.</p>
+                    <div class="options">
+                        <div class="option" data-value="varied">Mix of content (news, events, offers, products)</div>
+                        <div class="option" data-value="offers">Mostly sales and special offers</div>
+                        <div class="option" data-value="news">Mostly business updates and news</div>
+                        <div class="option" data-value="none">We don't post content</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Q&A Section -->
+            <div class="question-group">
+                <h3>Questions & Answers</h3>
+                <p class="section-intro">The Q&A section helps address common customer questions before they need to contact you.</p>
+                
+                <div class="question" data-category="qa" data-id="24">
+                    <p>24. How do you handle the Questions & Answers section on your profile?</p>
+                    <p class="question-context">The Q&A section lets you address common questions and concerns publicly.</p>
+                    <div class="options">
+                        <div class="option" data-value="proactive">We've added common questions ourselves and answer new ones quickly</div>
+                        <div class="option" data-value="reactive">We answer customer questions when they appear</div>
+                        <div class="option" data-value="delayed">We sometimes answer questions but not promptly</div>
+                        <div class="option" data-value="ignore">We don't monitor or answer questions</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="qa" data-id="25">
+                    <p>25. How often do you check for new customer questions?</p>
+                    <p class="question-context">Quick responses to questions show attentiveness and can convert interested customers.</p>
+                    <div class="options">
+                        <div class="option" data-value="daily">Daily or multiple times per week</div>
+                        <div class="option" data-value="weekly">About once a week</div>
+                        <div class="option" data-value="occasionally">Occasionally (monthly or less)</div>
+                        <div class="option" data-value="never">Never or very rarely</div>
+                    </div>
+                </div>
+                
+                <div class="question" data-category="qa" data-id="26">
+                    <p>26. Have you added frequently asked questions to your profile yourself?</p>
+                    <p class="question-context">Adding your own FAQs lets you control the narrative and address common questions proactively.</p>
+                    <div class="options">
+                        <div class="option" data-value="comprehensive">Yes - we've added several common questions and answers</div>
+                        <div class="option" data-value="basic">Yes - we've added a few basic questions</div>
+                        <div class="option" data-value="none">No - we haven't added any questions ourselves</div>
+                        <div class="option" data-value="unaware">I didn't know we could add our own questions</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button id="generateResults" class="btn">Generate Action Plan</button>
+            </div>
+        </div>
+        
+        <div class="loader" id="loader">
+            <div class="loader-spinner"></div>
+            <p>Analyzing your responses and generating action plan...</p>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2>Your GBP Optimization Action Plan</h2>
+            <p>Based on your survey responses, here are prioritized action points to improve your Google Business Profile:</p>
+            
+            <h3 class="section-title">High Priority Actions</h3>
+            <div id="highPriorityActions">
+                <div class="action-item">
+                    <h4>Claim and verify your Google Business Profile <span class="priority high">high</span></h4>
+                    <p class="action-benefit">This is the foundation of your local online presence and unlocks all management features.</p>
+                    <p>Visit business.google.com to claim your listing. You'll need to verify ownership through a postcard, phone call, or email depending on your business type.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Search for your business on Google Maps, click "Claim this business," and follow the verification steps. If your business doesn't appear, create a new listing from the Google Business Profile website.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Complete your basic business information <span class="priority high">high</span></h4>
+                    <p class="action-benefit">Correct contact details ensure customers can find and reach you, significantly improving local search ranking.</p>
+                    <p>Ensure your business name, address, phone number, and website are accurate and consistent across all platforms. Use your exact legal business name rather than adding keywords or locations.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Log into your GBP dashboard, go to "Info" section, and verify each field is correct. Make sure your NAP (Name, Address, Phone) exactly matches what's on your website and other directories.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Update your business hours <span class="priority high">high</span></h4>
+                    <p class="action-benefit">Accurate hours prevent frustrated customers and negative reviews from people who arrive when you're closed.</p>
+                    <p>Set your regular hours for each day of the week and add special hours for holidays or events. Remember to update if your hours change seasonally.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> In your GBP dashboard, go to "Info" → "Hours" to set regular hours. Click "Special hours" to add holiday exceptions. Consider setting a calendar reminder to review these quarterly.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Add high-quality photos <span class="priority high">high</span></h4>
+                    <p class="action-benefit">Listings with photos receive 42% more requests for directions and 35% more website clicks than those without.</p>
+                    <p>Upload at least 10 high-resolution photos showing your business exterior, interior, products, and team. Ensure photos are well-lit, in focus, and show your business at its best.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> In your GBP dashboard, go to "Photos" tab and upload images in each category. Use the mobile app for instant uploads. Consider hiring a professional photographer for key shots.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Create a compelling business description <span class="priority high">high</span></h4>
+                    <p class="action-benefit">Your description helps convince potential customers why they should choose your business.</p>
+                    <p>Write a 250-750 character description that clearly explains what you do, who you serve, and what makes your business unique. Include your primary keywords naturally.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Go to "Info" section of your dashboard, click edit next to "Business description." Focus first on your unique selling points, then include keywords potential customers might search for.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Start actively requesting reviews <span class="priority high">high</span></h4>
+                    <p class="action-benefit">Businesses that actively request reviews get 5-10x more reviews than those who don't, significantly improving visibility.</p>
+                    <p>Create a systematic process to ask happy customers for reviews. The best time is immediately after a positive interaction or completed service.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Create a short URL for your review page (search "Google Place ID" to get yours). Send follow-up emails/texts with this link, or print cards with a QR code linking to your review page.
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="section-title">Medium Priority Actions</h3>
+            <div id="mediumPriorityActions">
+                <div class="action-item">
+                    <h4>Add comprehensive product/service listings <span class="priority medium">medium</span></h4>
+                    <p class="action-benefit">Detailed listings help customers understand exactly what you offer before they contact you.</p>
+                    <p>List all your main products or services with descriptions, pricing (if applicable), and photos. Group similar items into categories for better organization.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> From your dashboard, go to "Products" or "Services" tab and click "Add product/service." Include details like price range, description, and a high-quality photo for each item.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Respond to all customer reviews <span class="priority medium">medium</span></h4>
+                    <p class="action-benefit">Responding to reviews shows you value customer feedback and increases engagement by 12%.</p>
+                    <p>Reply to every review—both positive and negative—within 1-2 business days. Personalize each response rather than using generic templates.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Go to the "Reviews" tab in your dashboard. For positive reviews, thank the customer and reinforce something specific they mentioned. For negative reviews, apologize, address their concerns, and offer to make it right.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Create a negative review response protocol <span class="priority medium">medium</span></h4>
+                    <p class="action-benefit">How you handle criticism publicly can turn a negative situation into a positive impression.</p>
+                    <p>Develop guidelines for addressing negative reviews professionally. Never argue or be defensive, even if the review seems unfair.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Create a simple template with: 1) Thank them for feedback, 2) Apologize for their experience, 3) Briefly explain what happened if needed, 4) Describe how you'll fix it, 5) Invite them to discuss offline with your contact info.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Start publishing Google Posts regularly <span class="priority medium">medium</span></h4>
+                    <p class="action-benefit">Regular posts increase profile views by up to 20% and can highlight timely information.</p>
+                    <p>Publish updates at least weekly with news, offers, or events. Include an image, relevant text, and a clear call to action on each post.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> From your dashboard, click "Create post" and select the type (Update, Event, Offer, or Product). Add an eye-catching image, concise text (150-300 characters), and a button linking to more information or your website.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Add videos showcasing your business <span class="priority medium">medium</span></h4>
+                    <p class="action-benefit">Videos increase engagement by 2-3x compared to static images and help showcase your business in action.</p>
+                    <p>Create short (30-60 second) videos that show your location, services being performed, or customer testimonials.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Videos don't need to be professional quality. Use a smartphone to capture authentic moments of your business in action. Upload through the "Photos" tab and select the "Video" category.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Create a Q&A section with common FAQs <span class="priority medium">medium</span></h4>
+                    <p class="action-benefit">Proactively answering questions saves customers time and reduces repetitive inquiries.</p>
+                    <p>Add 5-10 frequently asked questions about your business hours, services, policies, parking, etc. Be comprehensive but concise in your answers.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> From your Business Profile on Google Search (not in the dashboard), click "Ask a question" and enter common customer questions, then answer them yourself using your business account.
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="section-title">Low Priority Actions</h3>
+            <div id="lowPriorityActions">
+                <div class="action-item">
+                    <h4>Create diverse promotional content <span class="priority low">low</span></h4>
+                    <p class="action-benefit">Different types of posts engage different customer interests and keep your profile fresh.</p>
+                    <p>Mix up your Google Posts with various content types: business updates, special offers, events, and product highlights.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Create a simple content calendar with different post types for each week. For example: Week 1 - Product highlight, Week 2 - Special offer, Week 3 - Company news, Week 4 - Event or seasonal update.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Assign a dedicated GBP manager <span class="priority low">low</span></h4>
+                    <p class="action-benefit">Clear ownership ensures your profile stays current and questions are answered promptly.</p>
+                    <p>Designate one person to be responsible for regular monitoring and updates to your Google Business Profile.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Add this responsibility to someone's job description. Create a recurring calendar task for weekly profile checks (15-30 minutes) to respond to questions, add posts, and check insights.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Monitor and respond to Q&A questions <span class="priority low">low</span></h4>
+                    <p class="action-benefit">Quick responses show attentiveness and can convert interested browsers into customers.</p>
+                    <p>Check for new customer questions at least weekly and provide prompt, thorough answers before others can respond with potentially incorrect information.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Set a weekly reminder to check your profile for new questions. Consider setting up Google alerts for your business name to be notified when someone asks a question.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Enhance your business description with keywords <span class="priority low">low</span></h4>
+                    <p class="action-benefit">Strategic keywords help your business appear in more relevant searches.</p>
+                    <p>Research what terms potential customers use when searching for businesses like yours, and naturally incorporate these into your description.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Think about what services you offer and how customers might search for them. Include those terms, your location, and any specialties. Don't force keywords—they should read naturally in your text.
+                    </div>
+                </div>
+                
+                <div class="action-item">
+                    <h4>Regularly update product/service information <span class="priority low">low</span></h4>
+                    <p class="action-benefit">Current information prevents customer disappointment and complaints about outdated offerings or prices.</p>
+                    <p>Set a quarterly reminder to review and refresh your product/service listings with current prices, availability, and new offerings.</p>
+                    <div class="action-how">
+                        <strong>How to do it:</strong> Create a calendar reminder every three months to audit all listings. Remove discontinued items, update prices, add new offerings, and refresh photos as needed.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button id="retakeSurvey" class="btn btn-accent">Retake Survey</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add this code at the very end of the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make options selectable
+            var options = document.querySelectorAll('.option');
+            options.forEach(function(option) {
+                option.onclick = function() {
+                    // Find parent question
+                    var question = this.closest('.question');
+                    
+                    // Remove selected class from siblings
+                    var siblings = question.querySelectorAll('.option');
+                    siblings.forEach(function(sib) {
+                        sib.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to this option
+                    this.classList.add('selected');
+                    
+                    // Update progress
+                    updateProgress();
+                }
+            });
+            
+            // Update progress function
+            function updateProgress() {
+                var answered = document.querySelectorAll('.option.selected').length;
+                var total = 26;
+                var percentage = (answered / total) * 100;
+                
+                document.getElementById('progressBar').style.width = percentage + '%';
+                document.querySelector('.progress-text').textContent = answered + '/' + total + ' questions answered';
+            }
+            
+            // Generate results button
+            document.getElementById('generateResults').onclick = function() {
+                var answered = document.querySelectorAll('.option.selected').length;
+                if (answered < 26) {
+                    alert('Please answer all questions. You have answered ' + answered + ' out of 26.');
+                    return;
+                }
+                
+                document.getElementById('surveyContainer').style.display = 'none';
+                document.getElementById('loader').style.display = 'block';
+                
+                setTimeout(function() {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('resultsContainer').style.display = 'block';
+                }, 1500);
+            };
+            
+            // Retake survey button
+            document.getElementById('retakeSurvey').onclick = function() {
+                // Clear all selections
+                document.querySelectorAll('.option.selected').forEach(function(selected) {
+                    selected.classList.remove('selected');
+                });
+                
+                // Reset progress
+                document.getElementById('progressBar').style.width = '0%';
+                document.querySelector('.progress-text').textContent = '0/30 questions answered';
+                
+                // Show survey, hide results
+                document.getElementById('resultsContainer').style.display = 'none';
+                document.getElementById('surveyContainer').style.display = 'block';
+            };
+            
+            // Remove export functionality
+        });
+    </script>
+</body>
+</html>
